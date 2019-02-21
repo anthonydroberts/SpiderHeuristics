@@ -18,8 +18,10 @@ var context = canvas.getContext("2d");
 var spiderX, spiderY;
 var antX, antY;
 var moveList = [];
-var antDirection = "left";
 var statsString = "";
+var constantEntityPositions = 0; //if this is set to 1, the ant and the spider should start in the same spot every time to compare searches
+var spiderStartX = 0; var spiderStartY = 0; var antStartX = 0; var antStartY = 0; var antStartYChange = 0; var antStartXChange = 0;
+
 
 function drawBoard(){
 	canvas.width  = (GRIDSIZE*CELLSIZE)+p*2;
@@ -61,6 +63,16 @@ function drawEntities(){
 	}
 }
 
+function constantEntities(){
+	constantEntityPositions = 1;
+	antStartX = 5;
+	antStartY = 5;
+	antStartYChange = 1;
+	antStartXChange = 1;
+	spiderStartX = 15;
+	spiderStartY = 15;
+}
+
 //initialize everything
 function init(){
 	drawBoard();
@@ -72,11 +84,19 @@ function Node(par, data, children) {
     this.data = data;
     this.parent = par;
 	this.children = [];
+	this.cost = 0;
 }
 
 function computeMoves(searchType){
+
 	spiderX = Math.floor(Math.random() * GRIDSIZE);
 	spiderY = Math.floor(Math.random() * GRIDSIZE);
+	
+	if(constantEntityPositions == 1){
+		spiderX = spiderStartX;
+		spiderY = spiderStartY;
+	}
+
 	var antXchange = 0; var antYchange = 0; var spiderXchange = 0; var spiderYchange = 0;
 	
 	//set ant change rate function
@@ -138,6 +158,13 @@ function computeMoves(searchType){
 		return false;
 	}
 	
+	newAnt();
+	if(constantEntityPositions == 1){
+		antX = antStartX;
+		antY = antStartY;
+		antYchange = antStartYChange;
+		antXchange = antStartXChange
+	}
 	
 	/*
 	***** BFS BFS BFS *****
@@ -147,7 +174,6 @@ function computeMoves(searchType){
 	
 	if(searchType == "BFS" || searchType == "DFS"){
 		statsString = "";
-		newAnt();
 		let rootNode = new Node(null,[spiderX,spiderY,antX,antY]);
 		let Nodes = [];
 		Nodes.push(rootNode);
@@ -280,7 +306,6 @@ function computeMoves(searchType){
 	
 	if(searchType == "H1" || searchType == "H2" || searchType == "H1+H2/2"){
 		statsString = "";
-		newAnt();
 		let rootNode = new Node(null,[spiderX,spiderY,antX,antY]);
 		let Nodes = [];//OPEN
 		Nodes.push(rootNode);
@@ -289,7 +314,7 @@ function computeMoves(searchType){
 		let i = 0;
 		moveList = [];
 		
-		
+		currNode.cost = Math.abs(spiderX-antX)+Math.abs(spiderY-antY)
 		
 		
 		function addChild(p){
@@ -304,7 +329,7 @@ function computeMoves(searchType){
 				}
 				else if (searchType == "H2"){
 					//second heuristic
-					//second heuristic is direction, if the spiders new state direction matches the ant the cost will be lower
+					//second heuristic will be whether or not the spider can actually catch the ant
 					var h2Cost = 5;
 					if(spiderXchange == 1 && spiderYchange == 1){
 						h2Cost = -5;
@@ -337,12 +362,14 @@ function computeMoves(searchType){
 						if (Nodes[i].cost >childNode.cost){
 							Nodes.splice(i, 0, childNode)
 							added = true;
+							break;
 						}
 					}
 					
 					if(!added){
 						Nodes[Nodes.length] = childNode
 					}
+				
 					
 					//Nodes.push(childNode);
 					//VisitedNodes.push(childNode);
@@ -360,6 +387,7 @@ function computeMoves(searchType){
 									VisitedNodes[i].children[j] -=diff;
 								}
 								Nodes = mergeSort(Nodes);
+								break;
 								
 								
 							}
@@ -417,6 +445,7 @@ function computeMoves(searchType){
 
 								  return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
 								}
+								break;
 
 								
 							}
@@ -508,7 +537,7 @@ function computeMoves(searchType){
 		}
 		statsString = "Visited Nodes: " + VisitedNodes.length + " Time(iterations): " + i + " Solution Length: " + moveList.length;
 	}
-	
+	/*
 	if(searchType == "H2"){
 		
 	}
@@ -516,7 +545,7 @@ function computeMoves(searchType){
 	if(searchType == "H1+H2/2"){
 		
 	}
-	
+	*/
 	
 }
 
@@ -548,10 +577,10 @@ function run(searchString){
 			drawEntities();
 			
 			i++;
-			setTimeout(s,500);
+			setTimeout(s,750);
 		}
 	}
-	setTimeout(s,500);	
+	setTimeout(s,750);	
 	
 }
 
@@ -561,4 +590,4 @@ document.getElementById("start_button_dfs").onclick = function() {run("DFS");}
 document.getElementById("start_button_h1").onclick = function() {run("H1");}
 document.getElementById("start_button_h2").onclick = function() {run("H2");}
 document.getElementById("start_button_h1+h2/2").onclick = function() {run("H1+H2/2");}
-
+document.getElementById("constant_button").onclick = function() {constantEntities()}
