@@ -3,3 +3,6 @@ body{
 	color:#8cc;
 	font-family: "Arial", Arial, sans-serif;
 }
+#stats{
+	visibility: hidden
+}
