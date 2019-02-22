@@ -1,0 +1,136 @@
+	spiderX = Math.floor(Math.random() * GRIDSIZE);
+	spiderY = Math.floor(Math.random() * GRIDSIZE);
+	antX = Math.floor(Math.random() * GRIDSIZE);
+	antY = Math.floor(Math.random() * GRIDSIZE);
+	var num = Math.floor(Math.random() * 4);
+	if(num == 0){
+		antDirection = "left";
+	}
+	else if(num == 1){
+		antDirection = "up";
+	}
+	else if(num == 2){
+		antDirection = "down";
+	}
+	else if(num == 3){
+		antDirection = "right";
+	}
+	
+	if (searchType == "BFS"){
+
+		var NodeList = [];
+		NodeList.push([spiderX,spiderY,antX,antY]);
+		var rootNode = new Node(null,NodeList[0]);
+		//var currNode = new Node(rootNode,rootNode.data);
+		var NodeArray = [];
+		NodeArray.push(rootNode);
+		var VisitedNodeList = [];
+
+		var antXChange = 0, antYChange = 0;
+		
+		if (antDirection == "up"){
+			antYChange = -1;
+		}
+		else if (antDirection == "down"){
+			antYChange = 1;
+		}
+		else if (antDirection == "left"){
+			antXChange = -1;
+		}
+		else if (antDirection == "right"){
+			antXChange = 1;
+		}
+
+		var i = 0;
+		//spiderx,spidery,antx,anty
+		while(1){
+			
+			
+			//if this states spider coordinates equal the ants coordinates
+			console.log(NodeList[0][0],NodeList[0][1],NodeList[0][2],NodeList[0][3])
+			
+			if(NodeList[0][0] == NodeList[0][2] && NodeList[0][1] == NodeList[0][3]){
+				//goal condition met
+				//succesful node is NodeArray[i];
+				var solution = [];
+				//record the move in the succesful node, go to its parent, record its move, go to its parent, etc..
+				var lastNode = new Node(NodeArray.shift(),NodeList[0]);
+				var nodeInSolution = lastNode;
+				//console.log()
+				solution.unshift(lastNode.data);
+				while(nodeInSolution.parent!=null){//nodeInsolution isnt the root node
+					
+					nodeInSolution = nodeInSolution.parent;
+					solution.unshift(nodeInSolution.data);
+					
+				}
+				console.log(solution);
+				//print out solution
+				moveList = solution;
+				console.log(moveList);
+				alert("SUCCESS AFTER: " + i)
+				break;
+			}
+			
+			if(NodeList[0][2] > GRIDSIZE-1 || NodeList[0][3] > GRIDSIZE-1 || NodeList[0][2] < 0 || NodeList[0][3] < 0){
+				NodeList[0][2] = Math.floor(Math.random() * GRIDSIZE-1);
+				NodeList[0][3] = Math.floor(Math.random() * GRIDSIZE-1);
+				continue;
+			}
+var parentNode = NodeArray.shift();
+			if(!VisitedNodeList.includes([NodeList[0][0]+1,NodeList[0][1]-2,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange])){
+				if(!((NodeList[0][0]+1 > GRIDSIZE-1) || (NodeList[0][1]-2 < 0))){
+					var createdNode0 = new Node(parentNode,[NodeList[0][0]+1,NodeList[0][1]-2,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeList.push([NodeList[0][0]+1,NodeList[0][1]-2,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeArray.push(createdNode0);
+				}
+			}
+			if(!VisitedNodeList.includes([NodeList[0][0]-1,NodeList[0][1]-2,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange])){
+				if(!((NodeList[0][0]-1 < 0) || (NodeList[0][1]-2 < 0))){
+					var createdNode1 = new Node(parentNode,[NodeList[0][0]-1,NodeList[0][1]-2,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeList.push([NodeList[0][0]-1,NodeList[0][1]-2,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeArray.push(createdNode1);
+				}
+			}
+			if(!VisitedNodeList.includes([NodeList[0][0]-1,NodeList[0][1],NodeList[0][2]+antXChange,NodeList[0][3]+antYChange])){
+				if(!((NodeList[0][0]-1 < 0))){
+					var createdNode2 = new Node(parentNode,[NodeList[0][0]-1,NodeList[0][1],NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeList.push([NodeList[0][0]-1,NodeList[0][1],NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeArray.push(createdNode1);
+				}
+			}
+			if(!VisitedNodeList.includes([NodeList[0][0],NodeList[0][1]+1,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange])){
+				if(!((NodeList[0][1]+1 > GRIDSIZE-1))){
+					var createdNode3 = new Node(parentNode,[NodeList[0][0],NodeList[0][1]+1,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeList.push([NodeList[0][0],NodeList[0][1]+1,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeArray.push(createdNode3);
+				}
+			}
+			if(!VisitedNodeList.includes([NodeList[0][0]+1,NodeList[0][1],NodeList[0][2]+antXChange,NodeList[0][3]+antYChange])){
+				if(!((NodeList[0][0]+1 > GRIDSIZE-1))){
+					var createdNode4 = new Node(parentNode,[NodeList[0][0]+1,NodeList[0][1],NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeList.push([NodeList[0][0]+1,NodeList[0][1],NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeArray.push(createdNode4);
+				}
+			}
+			if(!VisitedNodeList.includes([NodeList[0][0]+1,NodeList[0][1]+1,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange])){
+				if(!((NodeList[0][0]+1 > GRIDSIZE-1) || (NodeList[0][1]+1 > GRIDSIZE-1))){
+					var createdNode5 = new Node(parentNode,[NodeList[0][0]+1,NodeList[0][1]+1,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeList.push([NodeList[0][0]+1,NodeList[0][1]+1,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeArray.push(createdNode5);
+				}
+			}
+			if(!VisitedNodeList.includes([NodeList[0][0]-1,NodeList[0][1]+1,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange])){
+				if(!((NodeList[0][0]-1 < 0) || (NodeList[0][1]+1 > GRIDSIZE-1))){
+					var createdNode6 = new Node(parentNode,[NodeList[0][0]-1,NodeList[0][1]+1,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeList.push([NodeList[0][0]-1,NodeList[0][1]+1,NodeList[0][2]+antXChange,NodeList[0][3]+antYChange]);
+					NodeArray.push(createdNode6);
+				}
+			}
+
+			VisitedNodeList.push([NodeList[0][0],NodeList[0][1],NodeList[0][2],NodeList[0][3]])
+
+			NodeList.shift()
+			i++;
+		}
+		

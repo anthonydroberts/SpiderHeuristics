@@ -65,12 +65,12 @@ function drawEntities(){
 
 function constantEntities(){
 	constantEntityPositions = 1;
-	antStartX = 5;
-	antStartY = 5;
-	antStartYChange = 1;
-	antStartXChange = 1;
-	spiderStartX = 15;
-	spiderStartY = 15;
+	antStartX = parseInt(document.getElementById("getAntX").value, 10);
+	antStartY = parseInt(document.getElementById("getAntY").value, 10);
+	antStartYChange =  parseInt(document.getElementById("getAntYChange").value, 10);
+	antStartXChange =  parseInt(document.getElementById("getAntXChange").value, 10);
+	spiderStartX =  parseInt(document.getElementById("getSpiderX").value, 10);
+	spiderStartY =  parseInt(document.getElementById("getSpiderY").value, 10);
 }
 
 //initialize everything
@@ -324,34 +324,23 @@ function computeMoves(searchType){
 				//now we will set the cost based on the heuristic
 				if (searchType == "H1"){
 					//first heuristic
-					//distance is the heuristic for this cost calculation
+					//difference between X and difference between Y values is the first heuristic
+					//This is the best one slightly, because the spider cannot move along a hypotenuse for the second heuristic so this one is more realistic for it
 					childNode.cost = childNode.parent.cost+Math.abs(p.data[0]+spiderXchange -(p.data[2]+antXchange))+Math.abs(p.data[1]+spiderYchange -(p.data[3]+antYchange));
+					//childNode.cost = childNode.parent.cost + Math.sqrt(Math.pow(p.data[0]+spiderXchange - p.data[2]+antXchange,2) + Math.pow(p.data[1]+spiderYchange - p.data[3]+antYchange,2));
 				}
 				else if (searchType == "H2"){
 					//second heuristic
-					//second heuristic will be whether or not the spider can actually catch the ant
-					var h2Cost = 5;
-					if(spiderXchange == 1 && spiderYchange == 1){
-						h2Cost = -5;
-					}
-					if(spiderXchange == antXchange && spiderYchange == antYchange){
-						//h2Cost = 1;
-					}
-					else if(spiderXchange != antXchange && spiderYchange != antYchange){
-						h2Cost = 3;
-					}
-					else if(spiderXchange == antXchange && spiderYchange != antYchange){
-						h2Cost = 2;
-					}
-					else if(spiderXchange != antXchange && spiderYchange == antYchange){
-						h2Cost = 2;
-					}
-					
-					childNode.cost = childNode.parent.cost+h2Cost;
+					//second heuristic will be THE HYPOTENUSE or the ACTUAL DISTANCE between the spider and the ant
+					childNode.cost = childNode.parent.cost + Math.sqrt(Math.pow(p.data[0]+spiderXchange - p.data[2]+antXchange,2) + Math.pow(p.data[1]+spiderYchange - p.data[3]+antYchange,2));
 					
 				}
 				else if (searchType == "H1+H2/2"){
-					//average of both heuristics
+					//average of both heuristics, this is better than H2, but worse than H1
+					let h1Cost = childNode.parent.cost+Math.abs(p.data[0]+spiderXchange -(p.data[2]+antXchange))+Math.abs(p.data[1]+spiderYchange -(p.data[3]+antYchange));
+					let h2Cost = childNode.parent.cost + Math.sqrt(Math.pow(p.data[0]+spiderXchange - p.data[2]+antXchange,2) + Math.pow(p.data[1]+spiderYchange - p.data[3]+antYchange,2));
+					let h3Cost = (h1Cost+h2Cost)/2;
+					childNode.cost = h3Cost;
 				}
 
 				if(isVisited(VisitedNodes,childNode) == false && isVisited(Nodes,childNode) == false ){ //check if node is already present, if not add it

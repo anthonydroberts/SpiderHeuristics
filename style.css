@@ -4,5 +4,8 @@ body{
 	font-family: "Arial", Arial, sans-serif;
 }
 #stats{
-	visibility: hidden
+	visibility: hidden;
+}
+form{
+	display: inline;
 }
