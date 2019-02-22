@@ -304,6 +304,10 @@ function computeMoves(searchType){
 	***** H1 H1 H1 *****
 	*/
 	
+	/*
+	
+	*/
+	
 	if(searchType == "H1" || searchType == "H2" || searchType == "H1+H2/2"){
 		statsString = "";
 		let rootNode = new Node(null,[spiderX,spiderY,antX,antY]);
@@ -323,16 +327,17 @@ function computeMoves(searchType){
 				childNode = new Node(p,[p.data[0]+spiderXchange,p.data[1]+spiderYchange,p.data[2]+antXchange,p.data[3]+antYchange]);
 				//now we will set the cost based on the heuristic
 				if (searchType == "H1"){
-					//first heuristic
-					//difference between X and difference between Y values is the first heuristic
-					//This is the best one slightly, because the spider cannot move along a hypotenuse for the second heuristic so this one is more realistic for it
-					childNode.cost = childNode.parent.cost+Math.abs(p.data[0]+spiderXchange -(p.data[2]+antXchange))+Math.abs(p.data[1]+spiderYchange -(p.data[3]+antYchange));
+					//first heuristic will be THE HYPOTENUSE or the ACTUAL DISTANCE between the spider and the ant
+
+					childNode.cost = childNode.parent.cost + Math.sqrt(Math.pow(p.data[0]+spiderXchange - p.data[2]+antXchange,2) + Math.pow(p.data[1]+spiderYchange - p.data[3]+antYchange,2));
+					
 					//childNode.cost = childNode.parent.cost + Math.sqrt(Math.pow(p.data[0]+spiderXchange - p.data[2]+antXchange,2) + Math.pow(p.data[1]+spiderYchange - p.data[3]+antYchange,2));
 				}
 				else if (searchType == "H2"){
 					//second heuristic
-					//second heuristic will be THE HYPOTENUSE or the ACTUAL DISTANCE between the spider and the ant
-					childNode.cost = childNode.parent.cost + Math.sqrt(Math.pow(p.data[0]+spiderXchange - p.data[2]+antXchange,2) + Math.pow(p.data[1]+spiderYchange - p.data[3]+antYchange,2));
+					//difference between X and difference between Y values is the second heuristic
+					//This is the best one slightly, because the spider cannot move along a hypotenuse for the second heuristic so this one is more realistic for it
+					childNode.cost = childNode.parent.cost+Math.abs(p.data[0]+spiderXchange -(p.data[2]+antXchange))+Math.abs(p.data[1]+spiderYchange -(p.data[3]+antYchange));
 					
 				}
 				else if (searchType == "H1+H2/2"){
